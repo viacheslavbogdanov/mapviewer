@@ -120,9 +120,11 @@ int WINAPI WinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 	std::vector<float> elevationMap;
 	unsigned int extents = 0;
 	LoadTerrariumElevationMap(strPath + std::string("dem/dem_13_4236_2917.png"), extents, elevationMap);
+	//LoadTerrariumElevationMap(strPath + std::string("dem/dem_14_8472_5835.png"), extents, elevationMap);
 
 	Tile t;
 	ReadTile(strPath + std::string("mvt/mvt_13_4236_2917.mvt"), t);
+	//ReadTile(strPath + std::string("mvt/mvt_14_8472_5835.mvt"), t);
 
 	if (!InitInstance(hInstance, nCmdShow))
 		return FALSE;
@@ -142,8 +144,8 @@ int WINAPI WinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 
 	for (auto l : t.m_Layers)
 	{
-		auto t = allowedTypes.find(l.m_Name);
-		if (t != allowedTypes.end())
+		auto type = allowedTypes.find(l.m_Name);
+		if (type != allowedTypes.end())
 		{
 			for (auto f : l.m_Features)
 			{
@@ -177,25 +179,10 @@ int WINAPI WinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 							{
 								COGVertexBuffers* newMesh = new COGVertexBuffers();
 								ConstructMesh(*pIndicesIn, *pVerticesIn, elevationMap, *newMesh);
-								AddMesh(t->second, newMesh);
+								AddMesh(13, 0, 0, type->second, newMesh);
 								break;
 							}
 						}
-
-						//std::vector<float> verts2DFine;
-						//std::vector<uint32_t> indicesFine;
-						//if (SubdivideMesh(indices, verts2D, 500.0f, indicesFine, verts2DFine))
-						//{
-						//	COGVertexBuffers* newMesh = new COGVertexBuffers();
-						//	ConstructMesh(indicesFine, verts2DFine, *newMesh);
-						//	AddMesh(t->second, newMesh);
-						//}
-						//else
-						//{
-						//	COGVertexBuffers* newMesh = new COGVertexBuffers();
-						//	ConstructMesh(indices, verts2D, *newMesh);
-						//	AddMesh(t->second, newMesh);
-						//}
 					}
 				}
 			}

@@ -89,13 +89,13 @@
 
 
 // Define a 64-bit type for various platforms
-#if defined(__int64) || defined(WIN32)
+#if defined(__int64) || defined(_WIN32)
 #define INT64BIT __int64
 #else
 #define INT64BIT long long int
 #endif
 
-#ifndef WIN32
+#ifndef _WIN32
 typedef struct _LARGE_INTEGER
 {
     union
