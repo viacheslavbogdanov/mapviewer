@@ -1,0 +1,125 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="OG">
+      <UniqueIdentifier>{1b522cb1-d26f-4610-871a-df293a5ed978}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="VTZeroRead.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GLRenderer.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\og\IOGCoreHelpers.h">
+      <Filter>OG</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\og\IOGMath.h">
+      <Filter>OG</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\og\IOGMatrix.h">
+      <Filter>OG</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\og\IOGQuaternion.h">
+      <Filter>OG</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\og\IOGVector.h">
+      <Filter>OG</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\og\ogshader.h">
+      <Filter>OG</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\og\ogvertexbuffers.h">
+      <Filter>OG</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\og\IOGVertexBuffers.h">
+      <Filter>OG</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\og\IOGCamera.h">
+      <Filter>OG</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\og\IOGObb.h">
+      <Filter>OG</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\og\IOGPlane.h">
+      <Filter>OG</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\og\ogcamera.h">
+      <Filter>OG</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\og\IOGFrustum.h">
+      <Filter>OG</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\og\IOGAabb.h">
+      <Filter>OG</Filter>
+    </ClInclude>
+    <ClInclude Include="Tesselator.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ElevationMap.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshSubdivision.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshConstructor.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Viewer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VTZeroRead.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GLRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sdk\og\ogmatrix.cpp">
+      <Filter>OG</Filter>
+    </ClCompile>
+    <ClCompile Include="sdk\og\ogshader.cpp">
+      <Filter>OG</Filter>
+    </ClCompile>
+    <ClCompile Include="sdk\og\ogvector.cpp">
+      <Filter>OG</Filter>
+    </ClCompile>
+    <ClCompile Include="sdk\og\ogvertexbuffers.cpp">
+      <Filter>OG</Filter>
+    </ClCompile>
+    <ClCompile Include="sdk\og\ogquaternion.cpp">
+      <Filter>OG</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sdk\og\ogcamera.cpp">
+      <Filter>OG</Filter>
+    </ClCompile>
+    <ClCompile Include="Tesselator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ElevationMap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshSubdivision.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshConstructor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
