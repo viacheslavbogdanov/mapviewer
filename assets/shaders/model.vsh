@@ -1,5 +1,5 @@
 attribute vec4 inVertex;
-attribute vec4 inNormal;
+attribute vec3 inNormal;
 
 uniform mat4 MVPMatrix;
 
