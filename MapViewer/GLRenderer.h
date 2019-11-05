@@ -14,3 +14,5 @@ void DestroyRenderer();
 void RenderFrame();
 
 void AddMesh(int _ZoomLevel, int _TileX, int _TileY, MeshTypes _Type, COGVertexBuffers* _Mesh);
+
+void SelectZoomLevel(int _ZoomLevel);

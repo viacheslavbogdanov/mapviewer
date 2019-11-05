@@ -4,6 +4,7 @@
 #include <string>
 #include <glew.h>
 #include <wglew.h>
+#include <sstream>
 
 #include "VTZeroRead.h"
 #include "Tesselator.h"
@@ -19,7 +20,7 @@ HWND shWnd = NULL;
 #define TIMER_ID	1
 #define TIMER_RATE	30
 
-int ScrWidth = 800, ScrHeight = 600;
+int ScrWidth = 800, ScrHeight = 800;
 
 
 /// Application shutdown.
@@ -40,11 +41,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 
 	case WM_KEYDOWN:
-		if (wParam == VK_LEFT)
+		if (wParam == '1')
 		{
+			SelectZoomLevel(12);
 		}
-		else if (wParam == VK_RIGHT)
+		else if (wParam == '2')
 		{
+			SelectZoomLevel(13);
+		}
+		else if (wParam == '3')
+		{
+			SelectZoomLevel(14);
 		}
 		break;
 
@@ -112,75 +119,127 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 }
 
 
+struct ZoomLevelConfig
+{
+	int ZoomLevel = -1;
+	int TilesInRow = -1;
+	std::vector<std::pair<int, int> > TileCoords;
+};
+
+
+std::vector<ZoomLevelConfig> g_ZoomLevelConfigs;
+
+
 /// main function
 int WINAPI WinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int nCmdShow)
 {
 	std::string strPath = GetResourcePath() + std::string("/../assets/");
 
-	std::vector<float> elevationMap;
-	unsigned int extents = 0;
-	LoadTerrariumElevationMap(strPath + std::string("dem/dem_13_4236_2917.png"), extents, elevationMap);
-	//LoadTerrariumElevationMap(strPath + std::string("dem/dem_14_8472_5835.png"), extents, elevationMap);
-
-	Tile t;
-	ReadTile(strPath + std::string("mvt/mvt_13_4236_2917.mvt"), t);
-	//ReadTile(strPath + std::string("mvt/mvt_14_8472_5835.mvt"), t);
-
-	if (!InitInstance(hInstance, nCmdShow))
-		return FALSE;
-
 #if 0
 	std::vector<unsigned int> sampleIndices = { 3, 0, 1, 1, 2, 3 };
-	std::vector<float> sampleVertices = { 8000.0f, 0.0f,   8000.0f, 8000.0f,   0.0f, 8000.0f,    0.0f, 0.0f};
+	std::vector<float> sampleVertices = { 8000.0f, 0.0f,   8000.0f, 8000.0f,   0.0f, 8000.0f,    0.0f, 0.0f };
 	std::vector<unsigned int> outIndices;
 	std::vector<float> outVertices;
 	SubdivideMesh(sampleIndices, sampleVertices, 50.0f, outIndices, outVertices);
 	COGVertexBuffers* newMesh = new COGVertexBuffers();
 	ConstructMesh(outIndices, outVertices, *newMesh);
-	//ConstructMesh(sampleIndices, sampleVertices, *newMesh);
 	AddMesh(TERRAIN, newMesh);
 #endif
+
 	std::map<std::string, MeshTypes> allowedTypes = { {"water", WATER}, {"earth", TERRAIN} };
 
-	for (auto l : t.m_Layers)
+	//g_ZoomLevelConfigs.push_back(ZoomLevelConfig());
+	//g_ZoomLevelConfigs.at(0).ZoomLevel = 13;
+	//g_ZoomLevelConfigs.at(0).TilesInRow = 1;
+	//g_ZoomLevelConfigs.at(0).TileCoords = { {4236, 2917} };
+
+	//g_ZoomLevelConfigs.push_back(ZoomLevelConfig());
+	//g_ZoomLevelConfigs.at(1).ZoomLevel = 14;
+	//g_ZoomLevelConfigs.at(1).TilesInRow = 2;
+	//g_ZoomLevelConfigs.at(1).TileCoords = { {8472, 5834}, {8472, 5835}, {8473, 5834}, {8473, 5835} };
+
+	g_ZoomLevelConfigs.push_back(ZoomLevelConfig());
+	g_ZoomLevelConfigs.at(0).ZoomLevel = 12;
+	g_ZoomLevelConfigs.at(0).TilesInRow = 1;
+	g_ZoomLevelConfigs.at(0).TileCoords = { {2118, 1458} };
+
+	g_ZoomLevelConfigs.push_back(ZoomLevelConfig());
+	g_ZoomLevelConfigs.at(1).ZoomLevel = 13;
+	g_ZoomLevelConfigs.at(1).TilesInRow = 2;
+	g_ZoomLevelConfigs.at(1).TileCoords = { {4236, 2916}, {4236, 2917}, {4237, 2916}, {4237, 2917} };
+	
+	g_ZoomLevelConfigs.push_back(ZoomLevelConfig());
+	g_ZoomLevelConfigs.at(2).ZoomLevel = 14;
+	g_ZoomLevelConfigs.at(2).TilesInRow = 4;
+	g_ZoomLevelConfigs.at(2).TileCoords 
+		= { {8472, 5832}, {8472, 5833}, {8472, 5834}, {8472, 5835},
+			{8473, 5832}, {8473, 5833}, {8473, 5834}, {8473, 5835},
+			{8474, 5832}, {8474, 5833}, {8474, 5834}, {8474, 5835},
+			{8475, 5832}, {8475, 5833}, {8475, 5834}, {8475, 5835} };
+
+	if (!InitInstance(hInstance, nCmdShow))
+		return FALSE;
+
+	for (auto zoomLevelCfg : g_ZoomLevelConfigs)
 	{
-		auto type = allowedTypes.find(l.m_Name);
-		if (type != allowedTypes.end())
+		for (size_t tileCfgId = 0; tileCfgId < zoomLevelCfg.TileCoords.size(); ++tileCfgId)
 		{
-			for (auto f : l.m_Features)
+			std::stringstream DemFileStr;
+			DemFileStr << "dem/dem_" << zoomLevelCfg.ZoomLevel << "_" << 
+				zoomLevelCfg.TileCoords[tileCfgId].first << "_" << zoomLevelCfg.TileCoords[tileCfgId].second << ".png";
+			std::vector<float> elevationMap;
+			unsigned int extents = 0;
+			LoadTerrariumElevationMap(strPath + DemFileStr.str(), extents, elevationMap);
+
+			std::stringstream MvtFileStr;
+			MvtFileStr << "mvt/mvt_" << zoomLevelCfg.ZoomLevel << "_" <<
+				zoomLevelCfg.TileCoords[tileCfgId].first << "_" << zoomLevelCfg.TileCoords[tileCfgId].second << ".mvt";
+			Tile t;
+			ReadTile(strPath + MvtFileStr.str(), t);
+
+			for (auto l : t.m_Layers)
 			{
-				if (!f.m_Rings.empty())
+				auto type = allowedTypes.find(l.m_Name);
+				if (type != allowedTypes.end())
 				{
-					for (auto r : f.m_Rings)
+					for (auto f : l.m_Features)
 					{
-						std::vector<float> verts2D;
-						std::vector<uint32_t> indices;
-						TesselateRing(r, indices, verts2D);
-
-						std::vector<float> verts2DFine;
-						std::vector<uint32_t> indicesFine;
-
-						std::vector<uint32_t>* pIndicesIn = &indices;
-						std::vector<float>* pVerticesIn = &verts2D;
-						std::vector<uint32_t>* pIndicesOut = &indicesFine;
-						std::vector<float>* pVerticesOut = &verts2DFine;
-						bool needSubdivision = true;
-						while (needSubdivision)
+						if (!f.m_Rings.empty())
 						{
-							needSubdivision = SubdivideMesh(*pIndicesIn, *pVerticesIn, 500.0f, *pIndicesOut, *pVerticesOut);
-							if (needSubdivision)
+							for (auto r : f.m_Rings)
 							{
-								std::swap(pIndicesIn, pIndicesOut);
-								std::swap(pVerticesIn, pVerticesOut);
-								pIndicesOut->clear();
-								pVerticesOut->clear();
-							}
-							else
-							{
-								COGVertexBuffers* newMesh = new COGVertexBuffers();
-								ConstructMesh(*pIndicesIn, *pVerticesIn, elevationMap, *newMesh);
-								AddMesh(13, 0, 0, type->second, newMesh);
-								break;
+								std::vector<float> verts2D;
+								std::vector<uint32_t> indices;
+								TesselateRing(r, indices, verts2D);
+
+								std::vector<float> verts2DFine;
+								std::vector<uint32_t> indicesFine;
+
+								std::vector<uint32_t>* pIndicesIn = &indices;
+								std::vector<float>* pVerticesIn = &verts2D;
+								std::vector<uint32_t>* pIndicesOut = &indicesFine;
+								std::vector<float>* pVerticesOut = &verts2DFine;
+								bool needSubdivision = true;
+								while (needSubdivision)
+								{
+									needSubdivision = SubdivideMesh(*pIndicesIn, *pVerticesIn, 500.0f, *pIndicesOut, *pVerticesOut);
+									if (needSubdivision)
+									{
+										std::swap(pIndicesIn, pIndicesOut);
+										std::swap(pVerticesIn, pVerticesOut);
+										pIndicesOut->clear();
+										pVerticesOut->clear();
+									}
+									else
+									{
+										COGVertexBuffers* newMesh = new COGVertexBuffers();
+										ConstructMesh(*pIndicesIn, *pVerticesIn, elevationMap, *newMesh);
+										int y = tileCfgId / zoomLevelCfg.TilesInRow;
+										int x = tileCfgId % zoomLevelCfg.TilesInRow;
+										AddMesh(zoomLevelCfg.ZoomLevel, x, y, type->second, newMesh);
+										break;
+									}
+								}
 							}
 						}
 					}
@@ -188,6 +247,8 @@ int WINAPI WinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 			}
 		}
 	}
+
+	SelectZoomLevel(12);
 
 	MSG msg;
 	while (1)

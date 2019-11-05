@@ -95,19 +95,22 @@ bool TesselateRing(const Ring& _Ring, std::vector<uint32_t>& _OutIndices, std::v
 		return false;
 	}
 
-	if (polygon.size() == 1)
+	if (polygon.empty())
+		return false;
+
+	_OutVertices.reserve((_Ring.m_OuterPoints.size()) * 2);
+	for (size_t oi = 0; oi < _Ring.m_OuterPoints.size(); ++oi)
 	{
-		//_OutVertices.reserve(_Ring.m_OuterPoints.size() * 2);
-		//for (auto p : _Ring.m_OuterPoints)
-		//{
-		//	_OutVertices.push_back((float)p.x);
-		//	_OutVertices.push_back((float)p.y);
-		//}
-		_OutVertices.reserve((_Ring.m_OuterPoints.size() - 1) * 2);
-		for (size_t oi = 0; oi < _Ring.m_OuterPoints.size() - 1; ++oi)
+		_OutVertices.push_back((float)_Ring.m_OuterPoints[oi].x);
+		_OutVertices.push_back((float)_Ring.m_OuterPoints[oi].y);
+	}
+	if (polygon.size() == 2)
+	{
+		//_OutVertices.reserve((_Ring.m_OuterPoints.size() - 1) * 2);
+		for (size_t oi = 0; oi < _Ring.m_InnerPoints.size(); ++oi)
 		{
-			_OutVertices.push_back((float)_Ring.m_OuterPoints[oi].x);
-			_OutVertices.push_back((float)_Ring.m_OuterPoints[oi].y);
+			_OutVertices.push_back((float)_Ring.m_InnerPoints[oi].x);
+			_OutVertices.push_back((float)_Ring.m_InnerPoints[oi].y);
 		}
 	}
 	return true;

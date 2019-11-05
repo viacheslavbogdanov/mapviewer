@@ -24,10 +24,10 @@ COGCamera g_Camera;
 OGVec3 g_TerrainColor = OGVec3(0.0f, 0.8f, 0.0f);
 OGVec3 g_WaterColor = OGVec3(0.0f, 0.5f, 1.0f);
 
-float g_dist = 14200.0f;
-float g_baseX = -4000.0f;
-float g_baseY = -4000.0f;
-
+int g_TileLength = 8192;
+float g_dist = 11766.0195f;
+float g_baseX = -1.0f * (g_TileLength / 2);
+float g_baseY = -1.0f * (g_TileLength / 2);
 
 struct TileGeometry
 {
@@ -43,23 +43,27 @@ struct TileZoomLevel
 {
 	int ZoomLevel;
 	OGMatrix mTileScale;
+	float CameraDistance = 0.0f;
 	std::vector<TileGeometry> Tiles;
 };
 
 struct ZoomLevelConfig
 {
 	int TilesInRow = 0;
-	float Scale = 0.0f;
+	float Zoom = 0.0f;
 };
 
-std::map<int, ZoomLevelConfig> g_Zoom2TileConfig = { {13, {1, 1.0f}}, {14, {2, 0.5f}}, {15, {4, 0.25f}} };
+std::map<int, ZoomLevelConfig> g_Zoom2TileConfig = { {12, {1, 1.0f}}, {13, {2, 1.0f}}, {14, {4, 1.0f}} };
 
 std::map<int, TileZoomLevel> g_ZoomLevels;
 
+int g_SelectedZoomLevel = 13;
 
 
 void InitRenderer(HWND _hWnd, int _ScrWidth, int _ScrHeight)
 {
+	float fA = (8192.f * 0.5f) / tanf(0.67f * 0.5f);
+
 	GLuint PixelFormat;
 	PIXELFORMATDESCRIPTOR pfd;
 	memset(&pfd, 0, sizeof(PIXELFORMATDESCRIPTOR));
@@ -97,14 +101,14 @@ void InitRenderer(HWND _hWnd, int _ScrWidth, int _ScrHeight)
 
 	MatrixPerspectiveFovRH(g_mProjection, 0.67f, float(_ScrWidth) / float(_ScrHeight), 1.0f, 50000.0f, false);
 
-	// Camera setup
-	OGVec3 vDir = OGVec3(0.0f, 0.0f, 1.0f);
-	OGVec3 vTarget = OGVec3(0.0f, 0.0f, g_dist * -1.0f);
-	OGVec3 vPos = vTarget + (vDir * g_dist);
-	OGVec3 vUp = vDir.cross(OGVec3(1.0f, 0.0f, 0.0f));
-	g_Camera.Setup(vPos, vTarget, vUp);
-	g_Camera.SetupViewport(g_mProjection);
-	g_Camera.Update();
+	//// Camera setup
+	//OGVec3 vDir = OGVec3(0.0f, 0.0f, 1.0f);
+	//OGVec3 vTarget = OGVec3(0.0f, 0.0f, g_dist * -1.0f);
+	//OGVec3 vPos = vTarget + (vDir * g_dist);
+	//OGVec3 vUp = vDir.cross(OGVec3(1.0f, 0.0f, 0.0f));
+	//g_Camera.Setup(vPos, vTarget, vUp);
+	//g_Camera.SetupViewport(g_mProjection);
+	//g_Camera.Update();
 
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
@@ -144,6 +148,8 @@ void DestroyRenderer()
 
 void AddMesh(int _ZoomLevel, int _TileX, int _TileY, MeshTypes _Type, COGVertexBuffers* _Mesh)
 {
+	//float fOffs[3] = { g_TileLength / 2,  -1 * g_TileLength, g_TileLength };
+
 	int tilesInRow = 0;
 	auto zl = g_Zoom2TileConfig.find(_ZoomLevel);
 	if (zl == g_Zoom2TileConfig.end())
@@ -160,14 +166,27 @@ void AddMesh(int _ZoomLevel, int _TileX, int _TileY, MeshTypes _Type, COGVertexB
 		auto& newLevel = g_ZoomLevels[_ZoomLevel];
 		newLevel.ZoomLevel = _ZoomLevel;
 		newLevel.Tiles.resize(tilesInRow * tilesInRow);
-		MatrixScaling(newLevel.mTileScale, zl->second.Scale, zl->second.Scale, 1.0f);
+		MatrixScaling(newLevel.mTileScale, 1.0f, 1.0f, 1.0f);
 		
+		newLevel.CameraDistance = ((g_TileLength * tilesInRow) * 0.5f) / tanf(0.67f * 0.5f);
+		//float fOffset = tilesInRow / 2 * g_TileLength;
+
+		float fOffset = 0.0f;
+		if (_ZoomLevel == 12)
+			fOffset = -1.0f * g_TileLength / 2;
+		if (_ZoomLevel == 13)
+			fOffset = -1.0f * g_TileLength;
+		if (_ZoomLevel == 14)
+			fOffset = -1.0f * g_TileLength - g_TileLength;
+
 		for (int y = 0; y < tilesInRow; ++y)
 		{
 			for (int x = 0; x < tilesInRow; ++x)
 			{
-				auto& tile = newLevel.Tiles.at(tilesInRow * x + y);
-				MatrixTranslation(tile.mTilePosition, g_baseX + x * g_baseX, g_baseY + y * g_baseY, g_dist * -1.0f);
+				//if (y != 0 || x != 0)
+				//	continue;
+				auto& tile = newLevel.Tiles.at(tilesInRow * y + x);
+				MatrixTranslation(tile.mTilePosition, x * g_TileLength + fOffset, y * g_TileLength + fOffset, newLevel.CameraDistance * -1.0f);
 				MatrixMultiply(tile.mWorld, tile.mTilePosition, newLevel.mTileScale);
 			}
 		}
@@ -183,6 +202,25 @@ void AddMesh(int _ZoomLevel, int _TileX, int _TileY, MeshTypes _Type, COGVertexB
 }
 
 
+void SelectZoomLevel(int _ZoomLevel)
+{
+	auto zoomLevel = g_ZoomLevels.find(_ZoomLevel);
+	if (zoomLevel == g_ZoomLevels.end())
+		return;
+
+	g_SelectedZoomLevel = _ZoomLevel;
+
+	// Camera setup
+	OGVec3 vDir = OGVec3(0.0f, 0.0f, 1.0f);
+	OGVec3 vTarget = OGVec3(0.0f, 0.0f, zoomLevel->second.CameraDistance * -1.0f);
+	OGVec3 vPos = vTarget + (vDir * zoomLevel->second.CameraDistance);
+	OGVec3 vUp = vDir.cross(OGVec3(1.0f, 0.0f, 0.0f));
+	g_Camera.Setup(vPos, vTarget, vUp);
+	g_Camera.SetupViewport(g_mProjection);
+	g_Camera.Update();
+}
+
+
 void RenderFrame()
 {
 	glClearColor(0.0f, 0.1f, 0.4f, 1.0f);
@@ -192,9 +230,9 @@ void RenderFrame()
 
 	glUseProgram(g_ProgId);
 
-	for (auto t : g_ZoomLevels[13].Tiles)
+	for (auto t : g_ZoomLevels[g_SelectedZoomLevel].Tiles)
 	{
-		MatrixMultiply(g_mMV, t.mTilePosition, g_mView);
+		MatrixMultiply(g_mMV, t.mWorld, g_mView);
 		MatrixMultiply(g_mMVP, g_mMV, g_mProjection);
 		glUniformMatrix4fv(g_MVPMatrixLoc, 1, GL_FALSE, g_mMVP.f);
 
