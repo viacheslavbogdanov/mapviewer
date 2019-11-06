@@ -625,6 +625,14 @@ struct OGVec3
                         OGVec3
     ****************************************************************************/
     float *ptr() { return (float*)this; }
+
+    /*!***************************************************************************
+    @Function			ptr
+    @Returns			pointer
+    @Description		returns a const pointer to memory containing the values of the
+                        OGVec3
+    ****************************************************************************/
+    const float *ptr() const { return (const float*)this; }
 };
 
 

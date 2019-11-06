@@ -135,28 +135,7 @@ int WINAPI WinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 {
 	std::string strPath = GetResourcePath() + std::string("/assets/");
 
-#if 0
-	std::vector<unsigned int> sampleIndices = { 3, 0, 1, 1, 2, 3 };
-	std::vector<float> sampleVertices = { 8000.0f, 0.0f,   8000.0f, 8000.0f,   0.0f, 8000.0f,    0.0f, 0.0f };
-	std::vector<unsigned int> outIndices;
-	std::vector<float> outVertices;
-	SubdivideMesh(sampleIndices, sampleVertices, 50.0f, outIndices, outVertices);
-	COGVertexBuffers* newMesh = new COGVertexBuffers();
-	ConstructMesh(outIndices, outVertices, *newMesh);
-	AddMesh(TERRAIN, newMesh);
-#endif
-
 	std::map<std::string, MeshTypes> allowedTypes = { {"water", WATER}, {"earth", TERRAIN}/*, {"buildings", LANDUSE}*/ };
-
-	//g_ZoomLevelConfigs.push_back(ZoomLevelConfig());
-	//g_ZoomLevelConfigs.at(0).ZoomLevel = 13;
-	//g_ZoomLevelConfigs.at(0).TilesInRow = 1;
-	//g_ZoomLevelConfigs.at(0).TileCoords = { {4236, 2917} };
-
-	//g_ZoomLevelConfigs.push_back(ZoomLevelConfig());
-	//g_ZoomLevelConfigs.at(1).ZoomLevel = 14;
-	//g_ZoomLevelConfigs.at(1).TilesInRow = 2;
-	//g_ZoomLevelConfigs.at(1).TileCoords = { {8472, 5834}, {8472, 5835}, {8473, 5834}, {8473, 5835} };
 
 	g_ZoomLevelConfigs.push_back(ZoomLevelConfig());
 	g_ZoomLevelConfigs.at(0).ZoomLevel = 12;

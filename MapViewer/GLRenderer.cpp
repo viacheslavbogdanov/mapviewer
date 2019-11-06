@@ -21,14 +21,11 @@ OGMatrix g_mMV;
 OGMatrix g_mMVP;
 COGCamera g_Camera;
 
-OGVec3 g_TerrainColor = OGVec3(0.0f, 0.8f, 0.0f);
-OGVec3 g_WaterColor = OGVec3(0.0f, 0.5f, 1.0f);
-OGVec3 g_LanduseColor = OGVec3(0.0f, 0.5f, 0.0f);
+const OGVec3 g_TerrainColor = OGVec3(0.0f, 0.8f, 0.0f);
+const OGVec3 g_WaterColor = OGVec3(0.0f, 0.5f, 1.0f);
+const OGVec3 g_LanduseColor = OGVec3(0.0f, 0.5f, 0.0f);
+const int g_TileLength = 8192;
 
-int g_TileLength = 8192;
-float g_dist = 11766.0195f;
-float g_baseX = -1.0f * (g_TileLength / 2);
-float g_baseY = -1.0f * (g_TileLength / 2);
 
 struct TileGeometry
 {
@@ -49,11 +46,13 @@ struct TileZoomLevel
 	std::vector<TileGeometry> Tiles;
 };
 
+
 struct ZoomLevelConfig
 {
 	int TilesInRow = 0;
 	float Zoom = 0.0f;
 };
+
 
 std::map<int, ZoomLevelConfig> g_Zoom2TileConfig = { {12, {1, 1.0f}}, {13, {2, 1.0f}}, {14, {4, 1.0f}} };
 
@@ -145,8 +144,6 @@ void DestroyRenderer()
 
 void AddMesh(int _ZoomLevel, int _TileX, int _TileY, MeshTypes _Type, COGVertexBuffers* _Mesh)
 {
-	//float fOffs[3] = { g_TileLength / 2,  -1 * g_TileLength, g_TileLength };
-
 	int tilesInRow = 0;
 	auto zl = g_Zoom2TileConfig.find(_ZoomLevel);
 	if (zl == g_Zoom2TileConfig.end())
@@ -166,7 +163,6 @@ void AddMesh(int _ZoomLevel, int _TileX, int _TileY, MeshTypes _Type, COGVertexB
 		MatrixScaling(newLevel.mTileScale, 1.0f, 1.0f, 1.0f);
 		
 		newLevel.CameraDistance = ((g_TileLength * tilesInRow) * 0.5f) / tanf(0.67f * 0.5f);
-		//float fOffset = tilesInRow / 2 * g_TileLength;
 
 		float fOffset = 0.0f;
 		if (_ZoomLevel == 12)
@@ -180,8 +176,6 @@ void AddMesh(int _ZoomLevel, int _TileX, int _TileY, MeshTypes _Type, COGVertexB
 		{
 			for (int x = 0; x < tilesInRow; ++x)
 			{
-				//if (y != 0 || x != 0)
-				//	continue;
 				auto& tile = newLevel.Tiles.at(tilesInRow * y + x);
 				MatrixTranslation(tile.mTilePosition, x * g_TileLength + fOffset, y * g_TileLength + fOffset, newLevel.CameraDistance * -1.0f);
 				MatrixMultiply(tile.mWorld, tile.mTilePosition, newLevel.mTileScale);
