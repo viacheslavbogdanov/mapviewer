@@ -23,6 +23,7 @@ COGCamera g_Camera;
 
 OGVec3 g_TerrainColor = OGVec3(0.0f, 0.8f, 0.0f);
 OGVec3 g_WaterColor = OGVec3(0.0f, 0.5f, 1.0f);
+OGVec3 g_LanduseColor = OGVec3(0.0f, 0.5f, 0.0f);
 
 int g_TileLength = 8192;
 float g_dist = 11766.0195f;
@@ -36,6 +37,7 @@ struct TileGeometry
 
 	std::vector<COGVertexBuffers*> TerrainMeshes;
 	std::vector<COGVertexBuffers*> WaterMeshes;
+	std::vector<COGVertexBuffers*> LanduseMeshes;
 };
 
 
@@ -62,8 +64,6 @@ int g_SelectedZoomLevel = 13;
 
 void InitRenderer(HWND _hWnd, int _ScrWidth, int _ScrHeight)
 {
-	float fA = (8192.f * 0.5f) / tanf(0.67f * 0.5f);
-
 	GLuint PixelFormat;
 	PIXELFORMATDESCRIPTOR pfd;
 	memset(&pfd, 0, sizeof(PIXELFORMATDESCRIPTOR));
@@ -80,7 +80,7 @@ void InitRenderer(HWND _hWnd, int _ScrWidth, int _ScrHeight)
 	wglMakeCurrent(g_hDC, g_hRC);
 	glewInit();
 
-	std::string basePath = GetResourcePath() + std::string("/../assets/shaders/");
+	std::string basePath = GetResourcePath() + std::string("/assets/shaders/");
 	if (ShaderLoadFromFile(basePath + std::string("model.vsh"), GL_VERTEX_SHADER, &g_VertShader) == false)
 	{
 		return;
@@ -100,15 +100,6 @@ void InitRenderer(HWND _hWnd, int _ScrWidth, int _ScrHeight)
 	g_MeshColorLoc = glGetUniformLocation(g_ProgId, "MeshColor");
 
 	MatrixPerspectiveFovRH(g_mProjection, 0.67f, float(_ScrWidth) / float(_ScrHeight), 1.0f, 50000.0f, false);
-
-	//// Camera setup
-	//OGVec3 vDir = OGVec3(0.0f, 0.0f, 1.0f);
-	//OGVec3 vTarget = OGVec3(0.0f, 0.0f, g_dist * -1.0f);
-	//OGVec3 vPos = vTarget + (vDir * g_dist);
-	//OGVec3 vUp = vDir.cross(OGVec3(1.0f, 0.0f, 0.0f));
-	//g_Camera.Setup(vPos, vTarget, vUp);
-	//g_Camera.SetupViewport(g_mProjection);
-	//g_Camera.Update();
 
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
@@ -135,6 +126,12 @@ void DestroyRenderer()
 				delete m;
 			}
 			t.TerrainMeshes.clear();
+
+			for (auto& m : t.LanduseMeshes)
+			{
+				delete m;
+			}
+			t.LanduseMeshes.clear();
 		}
 	}
 
@@ -198,6 +195,7 @@ void AddMesh(int _ZoomLevel, int _TileX, int _TileY, MeshTypes _Type, COGVertexB
 	{
 	case WATER: curTile.WaterMeshes.push_back(_Mesh); break;
 	case TERRAIN: curTile.TerrainMeshes.push_back(_Mesh); break;
+	case LANDUSE: curTile.LanduseMeshes.push_back(_Mesh); break;
 	}
 }
 
@@ -246,6 +244,13 @@ void RenderFrame()
 		for (auto m : t.WaterMeshes)
 		{
 			glUniform3fv(g_MeshColorLoc, 1, g_WaterColor.ptr());
+			m->Apply();
+			m->Render();
+		}
+
+		for (auto m : t.LanduseMeshes)
+		{
+			glUniform3fv(g_MeshColorLoc, 1, g_LanduseColor.ptr());
 			m->Apply();
 			m->Render();
 		}

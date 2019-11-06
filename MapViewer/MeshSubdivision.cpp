@@ -77,15 +77,9 @@ using Adjacency = std::map<unsigned int, std::pair<unsigned int, unsigned int> >
 using AdjacencyMap = std::map<unsigned int, Adjacency>;
 
 
-// Edge graph: -1 means it is an external edge, positive value gives index of its sibling
-using EdgeGraph = std::vector<unsigned int>;
-
-
-void FindAdjacentTriangles(const std::vector<unsigned int>& _Indices, AdjacencyMap& _outAdjacencyInfo, EdgeGraph& _outEdgeGraph)
+void FindAdjacentTriangles(const std::vector<unsigned int>& _Indices, AdjacencyMap& _outAdjacencyInfo)
 {
 	_outAdjacencyInfo.clear();
-	_outEdgeGraph.clear();
-	_outEdgeGraph.assign(_Indices.size(), -1);
 
 	size_t numIndices = _Indices.size();
 	for (size_t i = 0; i <= numIndices - 3; i += 3)
@@ -102,7 +96,6 @@ void FindAdjacentTriangles(const std::vector<unsigned int>& _Indices, AdjacencyM
 			{
 				auto& curTA = _outAdjacencyInfo[i];
 				curTA[n] = { adjacentTri, adjacentFace };
-				_outEdgeGraph[ai] = adjacentTri + adjacentFace;
 			}
 		}
 	}
@@ -164,8 +157,7 @@ bool SubdivideMesh(
 	std::vector<unsigned int>& _OutIndices, std::vector<float>& _OutVertices)
 {
 	AdjacencyMap adjacencyInfo;
-	EdgeGraph edgeGraph;
-	FindAdjacentTriangles(_Indices, adjacencyInfo, edgeGraph);
+	FindAdjacentTriangles(_Indices, adjacencyInfo);
 	std::vector<OGVec2> oddVertices;
 	Subdivision subdivInfo;
 

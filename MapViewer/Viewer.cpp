@@ -133,7 +133,7 @@ std::vector<ZoomLevelConfig> g_ZoomLevelConfigs;
 /// main function
 int WINAPI WinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int nCmdShow)
 {
-	std::string strPath = GetResourcePath() + std::string("/../assets/");
+	std::string strPath = GetResourcePath() + std::string("/assets/");
 
 #if 0
 	std::vector<unsigned int> sampleIndices = { 3, 0, 1, 1, 2, 3 };
@@ -146,7 +146,7 @@ int WINAPI WinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 	AddMesh(TERRAIN, newMesh);
 #endif
 
-	std::map<std::string, MeshTypes> allowedTypes = { {"water", WATER}, {"earth", TERRAIN} };
+	std::map<std::string, MeshTypes> allowedTypes = { {"water", WATER}, {"earth", TERRAIN}/*, {"buildings", LANDUSE}*/ };
 
 	//g_ZoomLevelConfigs.push_back(ZoomLevelConfig());
 	//g_ZoomLevelConfigs.at(0).ZoomLevel = 13;

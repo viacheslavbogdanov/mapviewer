@@ -7,6 +7,7 @@ enum MeshTypes
 {
 	TERRAIN,
 	WATER,
+	LANDUSE,
 };
 
 void InitRenderer(HWND _hWnd, int _ScrWidth, int _ScrHeight);
