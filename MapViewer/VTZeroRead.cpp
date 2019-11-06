@@ -7,17 +7,17 @@
 #include "Utils.h"
 
 
-vtzero::layer get_layer(const vtzero::vector_tile& tile, const std::string& layer_name_or_num)
+vtzero::layer GetLayer(const vtzero::vector_tile& _Tile, const std::string& _LayerNameOrNum)
 {
 	vtzero::layer layer;
 	char* str_end = nullptr;
-	const long num = std::strtol(layer_name_or_num.c_str(), &str_end, 10);
+	const long num = std::strtol(_LayerNameOrNum.c_str(), &str_end, 10);
 
-	if (str_end == layer_name_or_num.data() + layer_name_or_num.size())
+	if (str_end == _LayerNameOrNum.data() + _LayerNameOrNum.size())
 	{
 		if (num >= 0 && num < std::numeric_limits<long>::max()) 
 		{
-			layer = tile.get_layer(static_cast<std::size_t>(num));
+			layer = _Tile.get_layer(static_cast<std::size_t>(num));
 			if (!layer)
 			{
 				std::cerr << "No such layer: " << num << '\n';
@@ -27,10 +27,10 @@ vtzero::layer get_layer(const vtzero::vector_tile& tile, const std::string& laye
 		}
 	}
 
-	layer = tile.get_layer_by_name(layer_name_or_num);
+	layer = _Tile.get_layer_by_name(_LayerNameOrNum);
 	if (!layer)
 	{
-		std::cerr << "No layer named '" << layer_name_or_num << "'.\n";
+		std::cerr << "No layer named '" << _LayerNameOrNum << "'.\n";
 		std::exit(1);
 	}
 	return layer;
@@ -113,13 +113,13 @@ public:
 };
 
 
-static void print_layer(vtzero::layer& layer, Layer& _outLayer) 
+static void ParseLayer(vtzero::layer& _Layer, Layer& _OutLayer) 
 {
-	_outLayer.m_Name = std::string(layer.name());
-	_outLayer.m_Extent = layer.extent();
+    _OutLayer.m_Name = std::string(_Layer.name());
+    _OutLayer.m_Extent = _Layer.extent();
 
 	int feature_num = 0;
-	while (auto feature = layer.next_feature()) 
+	while (auto feature = _Layer.next_feature())
 	{
 		Feature f;
 		geom_handler gh;
@@ -136,7 +136,7 @@ static void print_layer(vtzero::layer& layer, Layer& _outLayer)
 			}
 		}
 		++feature_num;
-		_outLayer.m_Features.push_back(f);
+        _OutLayer.m_Features.push_back(f);
 	}
 }
 
@@ -153,16 +153,16 @@ void ReadLayers(vtzero::vector_tile& _Tile, Tile& _outTile)
 			while (auto layer = _Tile.next_layer())
 			{
 				Layer l;
-				print_layer(layer, l);
+                ParseLayer(layer, l);
 				++layer_num;
 				_outTile.m_Layers.push_back(l);
 			}
 		}
 		else 
 		{
-			auto layer = get_layer(_Tile, layer_num_or_name);
+			auto layer = GetLayer(_Tile, layer_num_or_name);
 			Layer l;
-			print_layer(layer, l);
+            ParseLayer(layer, l);
 			_outTile.m_Layers.push_back(l);
 		}
 	}
@@ -173,7 +173,7 @@ void ReadLayers(vtzero::vector_tile& _Tile, Tile& _outTile)
 }
 
 
-void ReadTile(const std::string& _TileFilename, Tile& _outTile)
+bool ReadTile(const std::string& _TileFilename, Tile& _outTile)
 {
 	int layer_num = 0;
 	int feature_num = 0;
@@ -183,8 +183,9 @@ void ReadTile(const std::string& _TileFilename, Tile& _outTile)
 		vtzero::vector_tile vtzTile{ data };
 		ReadLayers(vtzTile, _outTile);
 	}
-	catch (const std::exception& e)
+	catch (const std::exception& )
 	{
-		std::cerr << "Error in layer " << layer_num << " (feature " << feature_num << "): " << e.what() << '\n';
+		return false;
 	}
+    return true;
 }

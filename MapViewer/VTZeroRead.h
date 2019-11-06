@@ -42,4 +42,4 @@ struct Tile
 	std::vector<Layer> m_Layers;
 };
 
-void ReadTile(const std::string& _TileFilename, Tile& _outTile);
+bool ReadTile(const std::string& _TileFilename, Tile& _outTile);

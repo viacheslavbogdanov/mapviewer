@@ -7,7 +7,8 @@ void ConstructMesh(
 	const std::vector<uint32_t>& _Indices, const std::vector<float>& _Vertices2D, const std::vector<float>& _ElevationMap,
 	COGVertexBuffers& _OutMesh)
 {
-	float fMult = 1.0f;
+	// calculate elevated position
+    float fMult = 1.0f;
 	switch (_ZoomLevel)
 	{
 	case 12: fMult = 1.0f; break;
@@ -31,37 +32,13 @@ void ConstructMesh(
 		vertices3D.push_back(1.0f);
 	}
 
-	//for (size_t i = 0; i < _Indices.size(); i += 3)
-	//{
-	//	if ((i % 3 == 0))
-	//	{
-	//		OGVec3 vA = OGVec3(vertices3D[(_Indices[i + 0] * 6) + 0], vertices3D[(_Indices[i + 0] * 6) + 1], vertices3D[(_Indices[i + 0] * 6) + 2]);
-	//		OGVec3 vB = OGVec3(vertices3D[(_Indices[i + 1] * 6) + 0], vertices3D[(_Indices[i + 1] * 6) + 1], vertices3D[(_Indices[i + 1] * 6) + 2]);
-	//		OGVec3 vC = OGVec3(vertices3D[(_Indices[i + 2] * 6) + 0], vertices3D[(_Indices[i + 2] * 6) + 1], vertices3D[(_Indices[i + 2] * 6) + 2]);
-	//		OGVec3 vAB = (vA - vB).normalize();
-	//		OGVec3 vAC = (vC - vA).normalize();
-	//		OGVec3 vNorm = (vAB.cross(vAC)).normalize();
-	//		if (vNorm.z < 0.0f)
-	//			vNorm *= -1.0f;
-	//
-	//		vertices3D[(_Indices[i + 0] * 6) + 3] = vNorm.x;
-	//		vertices3D[(_Indices[i + 0] * 6) + 4] = vNorm.y;
-	//		vertices3D[(_Indices[i + 0] * 6) + 5] = vNorm.z;
-	//
-	//		vertices3D[(_Indices[i + 1] * 6) + 3] = vNorm.x;
-	//		vertices3D[(_Indices[i + 1] * 6) + 4] = vNorm.y;
-	//		vertices3D[(_Indices[i + 1] * 6) + 5] = vNorm.z;
-	//
-	//		vertices3D[(_Indices[i + 2] * 6) + 3] = vNorm.x;
-	//		vertices3D[(_Indices[i + 2] * 6) + 4] = vNorm.y;
-	//		vertices3D[(_Indices[i + 2] * 6) + 5] = vNorm.z;
-	//	}
-	//}
-
+    // calculate vertex normals
 	for (size_t i = 0; i < vertices3D.size(); i += 6)
 	{
 		OGVec3 vPos = OGVec3(vertices3D[i], vertices3D[i+1], vertices3D[i+2]);
-		std::vector<int> trianglesShare;
+		
+        // search for triangles that share this vector
+        std::vector<int> trianglesShare;
 		for (size_t ii = 0; ii < _Indices.size(); ++ii)
 		{
 			if (_Indices[ii] == i / 6)
@@ -69,7 +46,10 @@ void ConstructMesh(
 		}
 		if (trianglesShare.empty())
 			continue;
-		OGVec3 vNorm = OGVec3(0.0f);
+
+        // Get normals of all triangles, that share our vertex and produce the averege one.
+        // TODO: consider using weighted intepolation using triangle square as a weight
+        OGVec3 vNorm = OGVec3(0.0f);
 		for (auto tri : trianglesShare)
 		{
 			OGVec3 vA = OGVec3(vertices3D[(_Indices[tri + 0] * 6) + 0], vertices3D[(_Indices[tri + 0] * 6) + 1], vertices3D[(_Indices[tri + 0] * 6) + 2]);
