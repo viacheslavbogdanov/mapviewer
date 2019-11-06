@@ -233,7 +233,7 @@ int WINAPI WinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 									else
 									{
 										COGVertexBuffers* newMesh = new COGVertexBuffers();
-										ConstructMesh(*pIndicesIn, *pVerticesIn, elevationMap, *newMesh);
+										ConstructMesh(zoomLevelCfg.ZoomLevel, *pIndicesIn, *pVerticesIn, elevationMap, *newMesh);
 										int y = tileCfgId / zoomLevelCfg.TilesInRow;
 										int x = tileCfgId % zoomLevelCfg.TilesInRow;
 										AddMesh(zoomLevelCfg.ZoomLevel, x, y, type->second, newMesh);
