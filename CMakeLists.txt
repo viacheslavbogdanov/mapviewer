@@ -55,6 +55,7 @@ target_compile_definitions(MapViewer PRIVATE
                 -D_CRT_SECURE_NO_WARNINGS
                 -D_UNICODE
                 -DNOMINMAX
+                -DGLEW_STATIC
 )
 
 target_link_directories(MapViewer PRIVATE 
@@ -62,11 +63,10 @@ target_link_directories(MapViewer PRIVATE
                         MapViewer/sdk/OpenGL2/lib
 )
 
-target_link_libraries(MapViewer libpng16_static zlibstatic glew32 opengl32)
+target_link_libraries(MapViewer libpng16_static zlibstatic glew32s opengl32)
 
 set(MapViewerDir $<TARGET_FILE_DIR:MapViewer>)
 
 add_custom_command(TARGET MapViewer POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/assets ${MapViewerDir}/assets/
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/MapViewer/sdk/OpenGL2/lib/glew32.dll ${MapViewerDir}/
 )
