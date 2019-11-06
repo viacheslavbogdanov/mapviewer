@@ -75,8 +75,6 @@ void ConstructMesh(
 			OGVec3 vA = OGVec3(vertices3D[(_Indices[tri + 0] * 6) + 0], vertices3D[(_Indices[tri + 0] * 6) + 1], vertices3D[(_Indices[tri + 0] * 6) + 2]);
 			OGVec3 vB = OGVec3(vertices3D[(_Indices[tri + 1] * 6) + 0], vertices3D[(_Indices[tri + 1] * 6) + 1], vertices3D[(_Indices[tri + 1] * 6) + 2]);
 			OGVec3 vC = OGVec3(vertices3D[(_Indices[tri + 2] * 6) + 0], vertices3D[(_Indices[tri + 2] * 6) + 1], vertices3D[(_Indices[tri + 2] * 6) + 2]);
-			//if (vA == vB || vA == vC || vB == vC)
-			//	continue;
 			OGVec3 vAB = (vB - vA).normalize();
 			OGVec3 vAC = (vC - vA).normalize();
 

@@ -212,112 +212,112 @@ bool SubdivideMesh(
 				switch (subdiv->second.SubdivType)
 				{
 				case SUBD_AB:
-					// C B A'
-					_OutIndices.push_back(_Indices[i + 2]);
+					// B C A'
 					_OutIndices.push_back(_Indices[i + 1]);
+					_OutIndices.push_back(_Indices[i + 2]);
 					_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[0]);
 
-					// C A' A
+					// C A A'
 					_OutIndices.push_back(_Indices[i + 2]);
-					_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[0]);
 					_OutIndices.push_back(_Indices[i + 0]);
+					_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[0]);
 					break;
 
 				case SUBD_BC:
-					// B' B A
+					// B' A B
 					_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[1]);
+					_OutIndices.push_back(_Indices[i + 0]);
 					_OutIndices.push_back(_Indices[i + 1]);
-					_OutIndices.push_back(_Indices[i + 0]);
 
-					// A C B'
+					// A B' C
 					_OutIndices.push_back(_Indices[i + 0]);
-					_OutIndices.push_back(_Indices[i + 2]);
 					_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[1]);
+					_OutIndices.push_back(_Indices[i + 2]);
 					break;
 
 				case SUBD_CA:
-					// C' B A
+					// C' A B
 					_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[2]);
-					_OutIndices.push_back(_Indices[i + 1]);
 					_OutIndices.push_back(_Indices[i + 0]);
-
-					// C' C B
-					_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[2]);
-					_OutIndices.push_back(_Indices[i + 2]);
 					_OutIndices.push_back(_Indices[i + 1]);
+
+					// C' B C
+					_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[2]);
+					_OutIndices.push_back(_Indices[i + 1]);
+					_OutIndices.push_back(_Indices[i + 2]);
 					break;
 
 				case SUBD_AB | SUBD_BC:
-					// A B' A'
+					// A A' B'
 					_OutIndices.push_back(_Indices[i + 0]);
-					_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[1]);
 					_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[0]);
+					_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[1]);
 
-					// A' B' B
+					// A' B B'
 					_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[0]);
-					_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[1]);
 					_OutIndices.push_back(_Indices[i + 1]);
-
-					// C B' A
-					_OutIndices.push_back(_Indices[i + 2]);
 					_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[1]);
+
+					// C A B'
+					_OutIndices.push_back(_Indices[i + 2]);
 					_OutIndices.push_back(_Indices[i + 0]);
+					_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[1]);
 					break;
 
 				case SUBD_AB | SUBD_CA:
-					// C B' A
+					// C A B'
 					_OutIndices.push_back(_Indices[i + 2]);
+					_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[0]);
 					_OutIndices.push_back(_Indices[i + 1]);
-					_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[0]);
 
-					// C A' C'
+					// C C' A'
 					_OutIndices.push_back(_Indices[i + 2]);
-					_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[0]);
 					_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[2]);
+					_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[0]);
 
-					// C' A' A
+					// C' A A'
 					_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[2]);
-					_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[0]);
 					_OutIndices.push_back(_Indices[i + 0]);
+					_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[0]);
 					break;
 
 				case SUBD_BC | SUBD_CA:
-					// A B' B
+					// A B B'
 					_OutIndices.push_back(_Indices[i + 0]);
-					_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[1]);
 					_OutIndices.push_back(_Indices[i + 1]);
-
-					// C' B' A
-					_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[2]);
 					_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[1]);
+
+					// C' A B'
+					_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[2]);
 					_OutIndices.push_back(_Indices[i + 0]);
-
-					// C B' C'
-					_OutIndices.push_back(_Indices[i + 2]);
 					_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[1]);
+
+					// C C' B'
+					_OutIndices.push_back(_Indices[i + 2]);
 					_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[2]);
+					_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[1]);
 					break;
 
 				case SUBD_AB | SUBD_BC | SUBD_CA:
-					// C' C B'
+					// C' B' C
 					_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[2]);
+					_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[1]);
 					_OutIndices.push_back(_Indices[i + 2]);
-					_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[1]);
 
-					// C' A' A
+					// C' A A'
 					_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[2]);
-					_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[0]);
 					_OutIndices.push_back(_Indices[i + 0]);
-
-					// A' B' B
 					_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[0]);
-					_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[1]);
+
+					// A' B B'
+					_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[0]);
 					_OutIndices.push_back(_Indices[i + 1]);
-
-					// C' B' A'
-					_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[2]);
 					_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[1]);
+
+					// C' A' B'
+					_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[2]);
 					_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[0]);
+					_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[1]);
 					break;
 
 				default:
@@ -325,6 +325,7 @@ bool SubdivideMesh(
 					assert(0);
 					break;
 				}
+
 			}
 			else
 			{
@@ -338,106 +339,3 @@ bool SubdivideMesh(
 	}
 	return false;
 }
-
-
-
-
-//switch (subdiv->second.SubdivType)
-//{
-//case SUBD_AB:
-//	// A A' C
-//	_OutIndices.push_back(_Indices[i + 0]);
-//	_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[0]);
-//	_OutIndices.push_back(_Indices[i + 2]);
-//
-//	// C A' B
-//	_OutIndices.push_back(_Indices[i + 2]);
-//	_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[0]);
-//	_OutIndices.push_back(_Indices[i + 1]);
-//	break;
-//
-//case SUBD_BC:
-//	// A B B'
-//	_OutIndices.push_back(_Indices[i + 0]);
-//	_OutIndices.push_back(_Indices[i + 1]);
-//	_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[1]);
-//
-//	// A B' C
-//	_OutIndices.push_back(_Indices[i + 0]);
-//	_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[1]);
-//	_OutIndices.push_back(_Indices[i + 2]);
-//	break;
-//
-//case SUBD_CA:
-//	// A B C'
-//	_OutIndices.push_back(_Indices[i + 0]);
-//	_OutIndices.push_back(_Indices[i + 1]);
-//	_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[2]);
-//
-//	// C' B C
-//	_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[2]);
-//	_OutIndices.push_back(_Indices[i + 1]);
-//	_OutIndices.push_back(_Indices[i + 2]);
-//	break;
-//
-//case SUBD_AB | SUBD_BC:
-//	// A A' B'
-//	_OutIndices.push_back(_Indices[i + 0]);
-//	_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[0]);
-//	_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[1]);
-//
-//	// B' A' B
-//	_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[1]);
-//	_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[0]);
-//	_OutIndices.push_back(_Indices[i + 1]);
-//
-//	// B' C A
-//	_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[1]);
-//	_OutIndices.push_back(_Indices[i + 2]);
-//	_OutIndices.push_back(_Indices[i + 0]);
-//	break;
-//
-//case SUBD_BC | SUBD_CA:
-//	// A B B'
-//	_OutIndices.push_back(_Indices[i + 0]);
-//	_OutIndices.push_back(_Indices[i + 1]);
-//	_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[1]);
-//
-//	// A B' C'
-//	_OutIndices.push_back(_Indices[i + 0]);
-//	_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[1]);
-//	_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[2]);
-//
-//	// C' B' C
-//	_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[2]);
-//	_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[1]);
-//	_OutIndices.push_back(_Indices[i + 2]);
-//	break;
-//
-//case SUBD_AB | SUBD_BC | SUBD_CA:
-//	// A A' C'
-//	_OutIndices.push_back(_Indices[i + 0]);
-//	_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[0]);
-//	_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[2]);
-//
-//	// C' A' B'
-//	_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[2]);
-//	_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[0]);
-//	_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[1]);
-//
-//	// B' A' B
-//	_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[1]);
-//	_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[0]);
-//	_OutIndices.push_back(_Indices[i + 1]);
-//
-//	// B' C' C
-//	_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[1]);
-//	_OutIndices.push_back(firstOddVertexIndex + subdiv->second.SubdivPtIds[2]);
-//	_OutIndices.push_back(_Indices[i + 2]);
-//	break;
-//
-//default:
-//	// Other types are impossible!
-//	assert(0);
-//	break;
-//}
