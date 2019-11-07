@@ -68,6 +68,4 @@ void ConstructMesh(
         _OutVertices[i + 4] = vNorm.y;
         _OutVertices[i + 5] = vNorm.z;
     }
-
-    //_OutMesh.Fill(vertices3D.data(), vertices3D.size() / 6, _Indices.size() / 3, sizeof(float) * 6, _Indices.data(), _Indices.size());
 }

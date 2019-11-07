@@ -74,17 +74,20 @@ void InitRenderer(HWND _hWnd, int _ScrWidth, int _ScrHeight)
     std::string basePath = GetResourcePath() + std::string("/assets/shaders/");
     if (ShaderLoadFromFile(basePath + std::string("model.vsh"), GL_VERTEX_SHADER, &g_VertShader) == false)
     {
-        // TODO: error in MsgBox
+        // TODO: better error handling here and further
+        ::MessageBoxA(NULL, "Assets folder was not found", "Error", 0);
         return;
     }
     if (ShaderLoadFromFile(basePath + std::string("model.fsh"), GL_FRAGMENT_SHADER, &g_FragShader) == false)
     {
+        ::MessageBoxA(NULL, "Assets folder was not found", "Error", 0);
         return;
     }
 
     const char* pszAttribs[] = { "inVertex", "inNormal" };
     if (CreateProgram(&g_ProgId, g_VertShader, g_FragShader, pszAttribs, 2) == false)
     {
+        ::MessageBoxA(NULL, "GL Program link error", "Error", 0);
         return;
     }
 
@@ -137,6 +140,10 @@ void DestroyRenderer()
 
 void LoadSceneData(const SceneMeshes& _SceneData)
 {
+    // positioning offsets
+    // TODO: either calculate them on the flight or move to tile config
+    std::map<int, float> TileOffsets = { {12, -1.0f * g_TileLength / 2}, {13, -1.0f * g_TileLength}, {14, -1.0f * g_TileLength - g_TileLength} };
+
     for (auto l : _SceneData.ZoomLevels)
     {
         if (g_ZoomLevels.find(l.first) == g_ZoomLevels.end())
@@ -149,13 +156,7 @@ void LoadSceneData(const SceneMeshes& _SceneData)
 
             newLevel.CameraDistance = ((g_TileLength * l.second.TilesInRow) * 0.5f) / tanf(0.67f * 0.5f);
 
-            float fOffset = 0.0f;
-            if (l.first == 12)
-                fOffset = -1.0f * g_TileLength / 2;
-            if (l.first == 13)
-                fOffset = -1.0f * g_TileLength;
-            if (l.first == 14)
-                fOffset = -1.0f * g_TileLength - g_TileLength;
+            float fOffset = TileOffsets[l.first];
 
             for (int y = 0; y < l.second.TilesInRow; ++y)
             {
@@ -168,6 +169,7 @@ void LoadSceneData(const SceneMeshes& _SceneData)
             }
         }
 
+        // fill meshes (GL index+vertex buffs) for the appropriate tiles
         auto& curLevel = g_ZoomLevels[l.first];
         for (auto t : l.second.Tiles)
         {

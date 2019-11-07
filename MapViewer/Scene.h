@@ -10,6 +10,11 @@ enum MeshTypes
     LANDUSE,
 };
 
+enum StitchSide
+{
+    STITCH_HOR,
+    STITCH_VER
+};
 
 struct ZoomLevelConfig
 {
@@ -65,6 +70,8 @@ private:
     void SetupConfigs();
     void LoadZoomLevel(const ZoomLevelConfig& _Cfg);
     void LoadTile(SceneMeshes::TileMeshes& _CurTile, const ZoomLevelConfig::TileConfig& _Cfg);
+    void StitchTiles();
+    void StitchMeshes(SceneMeshes::TileMeshes::MeshData& _MeshA, SceneMeshes::TileMeshes::MeshData& _MeshB, StitchSide _Side);
 
 private:
     std::vector<ZoomLevelConfig> g_ZoomLevelConfigs;
