@@ -27,6 +27,8 @@ add_executable(MapViewer WIN32
     MapViewer/Viewer.cpp
     MapViewer/VTZeroRead.cpp
     MapViewer/VTZeroRead.h
+    MapViewer/Scene.cpp
+    MapViewer/Scene.h
     # helper library
     MapViewer/sdk/og/IOGAabb.h
     MapViewer/sdk/og/IOGCamera.h
@@ -58,9 +60,17 @@ target_compile_definitions(MapViewer PRIVATE
                 -DGLEW_STATIC
 )
 
+if(${CMAKE_SIZEOF_VOID_P} STREQUAL "8")
+    set(PNGLIBPATH MapViewer/sdk/libpng/lib/x64)
+    set(GLEWPATH MapViewer/sdk/OpenGL2/lib/x64)
+else()
+    set(PNGLIBPATH MapViewer/sdk/libpng/lib/x86)
+    set(GLEWPATH MapViewer/sdk/OpenGL2/lib/x86)
+endif()
+
 target_link_directories(MapViewer PRIVATE 
-                        MapViewer/sdk/libpng/lib
-                        MapViewer/sdk/OpenGL2/lib
+                        ${PNGLIBPATH}
+                        ${GLEWPATH}
 )
 
 target_link_libraries(MapViewer libpng16_static zlibstatic glew32s opengl32)
